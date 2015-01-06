@@ -1,0 +1,10 @@
+- var production = 'pro' == process.env.NODE_ENV 
+
+html(lang='eng')  
+  head    
+    title My hangout
+  body
+    #react-app
+    script(id="initial-state", type="application/json") #{initialState}
+    script(src='https://cdn.socket.io/socket.io-1.2.0.js')
+    script(src='public/js/bundle.js')

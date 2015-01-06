@@ -1,0 +1,43 @@
+{
+  "name": "my-hangout",
+  "version": "1.0.0",
+  "description": "my-hangout ==========",
+  "main": "index.js",
+  "scripts": {
+    "watch": "watchify app.js -o public/js/bundle.js -v",
+    "browserify": "browserify app.js | uglifyjs > public/js/bundle.js",
+    "build": "npm run browserify ",
+    "start": "npm run watch & nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juancjara/my-hangout.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juancjara/my-hangout/issues"
+  },
+  "homepage": "https://github.com/juancjara/my-hangout",
+  "devDependencies": {
+    "uglify-js": "^2.4.16",
+    "watchify": "^2.2.1",
+    "reactify": "~0.14.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.9.3",
+    "browserify": "^8.0.3",
+    "express": "^4.10.4",
+    "express-session": "^1.9.3",
+    "jade": "^1.8.0",
+    "mongoose": "^3.8.21",
+    "node-jsx": "^0.12.4",
+    "react": "^0.12.2",
+    "socket.io": "^1.2.1"
+  },
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
+  }
+}
