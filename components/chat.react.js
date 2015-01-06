@@ -7,68 +7,118 @@ module.exports = ChatView = React.createClass({
   getInitialState: function() {
     return {
       inputMsg: '',
-      messages: []
+      messages: [],
+      writeStatus: ''
     };
   },
   componentDidMount: function() {
     var self = this;
-    socket.on('chat message', function (data) {
-        self.addMsg(data);
+    socket.on('chat message', function(data) {
+      if (data.from === self.props.to) {
+        self.open();
+        self.addMsg(data.msg, self.props.to);
+      }
     });
+    socket.on('on writing', function(data) {
+      if (data.from === self.props.to) {
+        self.setState({
+          writeStatus: 'escribiendo'
+        });
+      }
+    })
+    socket.on('off writing', function(data) {
+      if (data.from === self.props.to) {
+        self.setState({
+          writeStatus: ''
+        });
+      }
+    })
   },
-  addMsg: function(msg) {
-    console.log('addMsg');
-    var nextMsgs = this.state.messages.concat([msg]);
+  open: function() {
+    this.props.openChat(this.props.to);
+  },
+  addMsg: function(msg, who) {
+    var nextMsgs = this.state.messages.concat([{
+      msg: msg,
+      who: who
+    }]);
     this.setState({
       messages: nextMsgs
-    });
+    }, function () {
+      this.props.scroll();
+    }.bind(this));
   },
   handleChange: function(e) {
+    var value = e.target.value;
+    var typeEvent = 'off';
+    if (value && value.length) {
+      typeEvent = 'on'; 
+    }
+    typeEvent +=' writing';
+    socket.emit(typeEvent, {
+        to: this.props.to,
+        from: this.props.from
+      });
     this.setState({inputMsg: e.target.value});
   },
   sendMessage: function(e) {
     e.preventDefault();
-    var nextMsgs = this.state.messages.concat([this.state.inputMsg]);
-    //todo send msg
     socket.emit('chat message', {
       to: this.props.to,
-      msg: this.state.inputMsg
+      msg: this.state.inputMsg,
+      from: this.props.from
     });
+    socket.emit('off writing', {
+      to: this.props.to,
+      from: this.props.from
+    })
+    this.addMsg(this.state.inputMsg, 'me');
     this.setState({
-      messages: nextMsgs, inputMsg: ''
+      inputMsg: ''
     });
-  },
-  close: function() {
-    console.log(close);1
   },
   render: function() {
     var messages = this.state.messages.map(function(item ,i) {
+      var orientation = 'break-text';//(item.who == 'me') ? 'text-right': 'text-left';
       return (
-        <li 
+        <li
+          className={orientation}
           key= {i}>
-          {item}
+          {item.msg}
         </li>
       )
     });
+    var blockClass = 'chat-block ';
+    blockClass += this.props.close ? 'hide': '';
+
     return (
-      <div className='chat-block'>
+      <div className={blockClass}>
         <div className='title clickable'>
           <div className='receiver pull-left'>{this.props.to}</div>
           <div className='options pull-right'>
-            <div onClick={this.close}>c</div>
+            <div onClick={this.props.closeChat.bind(null, this.props.to)}>c</div>
           </div>
         </div>
-        <ul className='clear-list'>
-          {messages}
-        </ul>
+
+        <div className='messages-wrapper'>
+          <ul className='clear-list'>
+            {messages}
+          </ul>
+          <div 
+            className='writting-status'>
+            {this.state.writeStatus}
+          </div>
+        </div>
         <form 
           className='form-msg'
           onSubmit={this.sendMessage}>
           <input 
             type="text" 
             value={this.state.inputMsg}
+            name='inputMsg'
             onChange={this.handleChange} /> 
         </form>
+        
       </div>
     )
   }

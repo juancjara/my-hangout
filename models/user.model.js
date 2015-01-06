@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var UserSchema = new Schema({
+  picture: String,
   name: String,
   email: String,
   online: {type: Boolean, default: false},
@@ -24,8 +25,15 @@ UserSchema.statics.disconnect = function(name, cb) {
 }
 
 UserSchema.statics.getFriends = function(name, cb) {
+  var data = {
+    name: 1, 
+    _id: 0, 
+    online: 1, 
+    picture: 1,
+    email: 1
+  }
   User.findOne({name: name})
-    .populate("friends", {name: 1, _id: 0, online: 1}).exec(cb);
+    .populate("friends", data).exec(cb);
 }
 
 UserSchema.statics.addFriend = function(data, cb) {

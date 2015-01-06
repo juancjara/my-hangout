@@ -1,3 +1,13 @@
+body
+  font-family: arial, sans-serif
+
+.break-text
+  -ms-word-break: break-all
+  word-break: break-all
+  -webkit-hyphens: auto
+  -moz-hyphens: auto
+  hyphens: autos
+
 .clear-list
   list-style: none
   margin: 0 0
@@ -11,8 +21,14 @@
   display: inline-block
 .clickable
   cursor: pointer
+.hide
+  display: none
+.text-right
+  text-align: right
+.text-left
+  text-align: left
 
-status-size = 15px
+status-size = 10px
 
 .friend-list
   
@@ -20,25 +36,26 @@ status-size = 15px
     background-color: black
     padding: 8px 4px
     width: 150px
-    font-size: 1em
+    font-size: 14px
     overflow: hidden
     &:hover
       background-color: gray
-    .picture
-      background-color: yellow
-      border-radius: 50%
-      height: 35px
+    .picture-wrapper
       position: relative
-      width: 35px
+      .picture
+        background-color: yellow
+        border-radius: 50%
+        height: 28px
+        width: 28px
       .status
         border-radius: 50%
-        bottom: -5px
+        bottom: -3px
         height: status-size
         position: absolute
-        right: -5px
+        right: -3px
         width: status-size
       .online
-        background-color: green
+        background-color: #35ac19
       .offline
         background-color: red
     .name
@@ -57,12 +74,13 @@ status-size = 15px
   li
     margin: 0 5px
   .chat-block
+    background-color: rgba(0,0,0,.2)
     border: 1px solid black
     font-size: 1em
-    min-height: 380px
+    height: 380px
     width: 250px
     .title
-      background-color: gray
+      background-color: rgba(0,0,0,.2)
       padding: 4px 15px
       overflow: hidden
       .options
@@ -71,6 +89,14 @@ status-size = 15px
         color: white
         max-width: 150px
         overflow: hidden
+    .messages-wrapper
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 315px
+      ul
+        min-height: 290px
+      .writting-status
+        color: red
     .form-msg
       bottom: 0
       margin-bottom: 0

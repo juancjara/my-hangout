@@ -46,7 +46,8 @@ module.exports = FriendListView = React.createClass({
           className='friend-block clickable'
           key= {i}
           onClick={this.props.addChatTo.bind(null, item.name)}>
-          <div className='picture pull-left'>
+          <div className='picture-wrapper pull-left'>
+            <img className='picture' src={item.picture}></img>
             <div className={statusClass}></div>
           </div>
           <div className='pull-left'>

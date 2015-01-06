@@ -22,59 +22,107 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
   getInitialState: function() {
     return {
       inputMsg: '',
-      messages: []
+      messages: [],
+      writeStatus: ''
     };
   },
   componentDidMount: function() {
     var self = this;
-    socket.on('chat message', function (data) {
-        self.addMsg(data);
+    socket.on('chat message', function(data) {
+      if (data.from === self.props.to) {
+        self.open();
+        self.addMsg(data.msg, self.props.to);
+      }
     });
+    socket.on('on writing', function(data) {
+      if (data.from === self.props.to) {
+        self.setState({
+          writeStatus: 'escribiendo'
+        });
+      }
+    })
+    socket.on('off writing', function(data) {
+      if (data.from === self.props.to) {
+        self.setState({
+          writeStatus: ''
+        });
+      }
+    })
   },
-  addMsg: function(msg) {
-    console.log('addMsg');
-    var nextMsgs = this.state.messages.concat([msg]);
+  open: function() {
+    this.props.openChat(this.props.to);
+  },
+  addMsg: function(msg, who) {
+    var nextMsgs = this.state.messages.concat([{
+      msg: msg,
+      who: who
+    }]);
     this.setState({
       messages: nextMsgs
-    });
+    }, function () {
+      this.props.scroll();
+    }.bind(this));
   },
   handleChange: function(e) {
+    var value = e.target.value;
+    var typeEvent = 'off';
+    if (value && value.length) {
+      typeEvent = 'on'; 
+    }
+    typeEvent +=' writing';
+    socket.emit(typeEvent, {
+        to: this.props.to,
+        from: this.props.from
+      });
     this.setState({inputMsg: e.target.value});
   },
   sendMessage: function(e) {
     e.preventDefault();
-    var nextMsgs = this.state.messages.concat([this.state.inputMsg]);
-    //todo send msg
     socket.emit('chat message', {
       to: this.props.to,
-      msg: this.state.inputMsg
+      msg: this.state.inputMsg,
+      from: this.props.from
     });
+    socket.emit('off writing', {
+      to: this.props.to,
+      from: this.props.from
+    })
+    this.addMsg(this.state.inputMsg, 'me');
     this.setState({
-      messages: nextMsgs, inputMsg: ''
+      inputMsg: ''
     });
-  },
-  close: function() {
-    console.log(close);1
   },
   render: function() {
     var messages = this.state.messages.map(function(item ,i) {
+      var orientation = 'break-text';//(item.who == 'me') ? 'text-right': 'text-left';
       return (
         React.DOM.li({
+          className: orientation, 
           key: i}, 
-          item
+          item.msg
         )
       )
     });
+    var blockClass = 'chat-block ';
+    blockClass += this.props.close ? 'hide': '';
+
     return (
-      React.DOM.div({className: "chat-block"}, 
+      React.DOM.div({className: blockClass}, 
         React.DOM.div({className: "title clickable"}, 
           React.DOM.div({className: "receiver pull-left"}, this.props.to), 
           React.DOM.div({className: "options pull-right"}, 
-            React.DOM.div({onClick: this.close}, "c")
+            React.DOM.div({onClick: this.props.closeChat.bind(null, this.props.to)}, "c")
           )
         ), 
-        React.DOM.ul({className: "clear-list"}, 
-          messages
+
+        React.DOM.div({className: "messages-wrapper"}, 
+          React.DOM.ul({className: "clear-list"}, 
+            messages
+          ), 
+          React.DOM.div({
+            className: "writting-status"}, 
+            this.state.writeStatus
+          )
         ), 
         React.DOM.form({
           className: "form-msg", 
@@ -82,8 +130,10 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
           React.DOM.input({
             type: "text", 
             value: this.state.inputMsg, 
+            name: "inputMsg", 
             onChange: this.handleChange})
         )
+        
       )
     )
   }
@@ -95,13 +145,38 @@ var React = require('react');
 var ChatView = require('./chat.react');
 
 module.exports = ChatManagerView = React.createClass({displayName: 'ChatManagerView',
+  getInitialState: function() {
+    return {
+      cont: null
+    }
+  },
+  componentDidMount: function() {
+    this.setState({
+      cont: $('.messages-wrapper')
+    })
+  },
+  scroll: function() {
+    for(var i =0,len = this.state.cont.length; i < len; i++) {
+      this.state.cont[i].scrollTop = this.state.cont[i].scrollHeight + 18;
+    }
+    /*$('.messages-wrapper')[0].scrollTop = (this.state.cont[0].scrollHeight + 18);
+    console.log('after', $('.messages-wrapper')[0].scrollTop);*/
+    /*this.state.cont[0].scrollHeight +
+                                    18;*/
+  },
   render: function() {
     var chats = this.props.chatsTo.map(function(item ,i) {
       return (
         React.DOM.li({
           className: "same-line", 
           key: i}, 
-          ChatView({to: item})
+          ChatView({
+            from: this.props.from, 
+            to: item.name, 
+            close: item.close, 
+            closeChat: this.props.closeChat, 
+            openChat: this.props.openChat, 
+            scroll: this.scroll})
         )
       )
     },this);
@@ -176,7 +251,8 @@ module.exports = FriendListView = React.createClass({displayName: 'FriendListVie
           className: "friend-block clickable", 
           key: i, 
           onClick: this.props.addChatTo.bind(null, item.name)}, 
-          React.DOM.div({className: "picture pull-left"}, 
+          React.DOM.div({className: "picture-wrapper pull-left"}, 
+            React.DOM.img({className: "picture", src: item.picture}), 
             React.DOM.div({className: statusClass})
           ), 
           React.DOM.div({className: "pull-left"}, 
@@ -202,12 +278,17 @@ var React = require('react');
 var FriendListView = require('./friendList.react');
 var ChatManagerView = require('./chatManager.react');
 var socket = require('./../public/js/clientIO');
+var utils = require('./../utils');
 
 module.exports = HangoutApp = React.createClass({displayName: 'HangoutApp',
   getInitialState: function(props) {
     props = props || this.props;
+    var chatsTo = props.initialState.friends.slice(0);
+    for (var i = 0; i < chatsTo.length; i++) {
+      chatsTo[i].close = true;
+    };
     return {
-      chatsTo: [],
+      chatsTo: chatsTo,
       username: props.initialState.username
     }
   },
@@ -220,13 +301,39 @@ module.exports = HangoutApp = React.createClass({displayName: 'HangoutApp',
     })
   },
   addChatTo: function(username) {
-    if (this.state.chatsTo.indexOf(username) != -1) {
+    var idx = utils.searchElement(this.state.chatsTo, username,
+                                  'name');
+    if (idx != -1) {
+      var arr = this.state.chatsTo;
+      arr[idx].close = false;
+      this.setState({
+        chatsTo: arr
+      });
       return;
     }
-    console.log('aca', username);
-    var nextChatsTo = this.state.chatsTo.concat([username]);
+    var nextChatsTo = this.state.chatsTo.concat([
+      {
+        username: username,
+        close: false
+      }
+    ]);
     this.setState({
       chatsTo: nextChatsTo
+    });
+  },
+  closeChat: function(username) {
+    this.toggleChat(username, true);
+  },
+  openChat: function(username) {
+    this.toggleChat(username, false);
+  },
+  toggleChat: function(username, status) {
+    var idx = utils.searchElement(this.state.chatsTo, username,
+                                  'name');
+    var arr = this.state.chatsTo;
+    arr[idx].close = status;
+    this.setState({
+      chatsTo: arr
     });
   },
   render: function() {
@@ -235,12 +342,16 @@ module.exports = HangoutApp = React.createClass({displayName: 'HangoutApp',
         FriendListView({
           friends: this.props.initialState.friends, 
           addChatTo: this.addChatTo}), 
-        ChatManagerView({chatsTo: this.state.chatsTo})
+        ChatManagerView({
+          from: this.state.username, 
+          chatsTo: this.state.chatsTo, 
+          closeChat: this.closeChat, 
+          openChat: this.openChat})
       )
     )
   }
 });
-},{"./../public/js/clientIO":"/home/juancarlos/Github/my-hangout/public/js/clientIO.js","./chatManager.react":"/home/juancarlos/Github/my-hangout/components/chatManager.react.js","./friendList.react":"/home/juancarlos/Github/my-hangout/components/friendList.react.js","react":"/home/juancarlos/Github/my-hangout/node_modules/react/react.js"}],"/home/juancarlos/Github/my-hangout/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
+},{"./../public/js/clientIO":"/home/juancarlos/Github/my-hangout/public/js/clientIO.js","./../utils":"/home/juancarlos/Github/my-hangout/utils.js","./chatManager.react":"/home/juancarlos/Github/my-hangout/components/chatManager.react.js","./friendList.react":"/home/juancarlos/Github/my-hangout/components/friendList.react.js","react":"/home/juancarlos/Github/my-hangout/node_modules/react/react.js"}],"/home/juancarlos/Github/my-hangout/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.

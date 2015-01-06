@@ -6,12 +6,8 @@ exports.index = function(req, res) {
 }
 
 exports.chat = function(req, res) {
-  req.session.username = 'yo';
-
-  
   var username = req.session.username;
   User.getFriends(username, function(err, dude) {
-    console.log('dude', dude)
     if (err) console.log('err', err);
     var data = {
       username: username,
@@ -26,6 +22,5 @@ exports.chat = function(req, res) {
 
 exports.postLogin = function(req, res) {
   req.session.username = req.body.username;
-  console.log('session', req.session.username);
   res.redirect('/chat');
 }
