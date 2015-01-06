@@ -5,7 +5,7 @@ var React = require('react');
 module.exports = FriendView = React.createClass({
   render: function() {
     return (
-      <div>
+      <div >
         friend
       </div>
     )

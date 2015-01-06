@@ -38,7 +38,9 @@ module.exports = ChatView = React.createClass({
       messages: nextMsgs, inputMsg: ''
     });
   },
-
+  close: function() {
+    console.log(close);1
+  },
   render: function() {
     var messages = this.state.messages.map(function(item ,i) {
       return (
@@ -49,12 +51,19 @@ module.exports = ChatView = React.createClass({
       )
     });
     return (
-      <div>
-        Chat capuchino
+      <div className='chat-block'>
+        <div className='title clickable'>
+          <div className='receiver pull-left'>{this.props.to}</div>
+          <div className='options pull-right'>
+            <div onClick={this.close}>c</div>
+          </div>
+        </div>
         <ul className='clear-list'>
           {messages}
         </ul>
-        <form onSubmit={this.sendMessage}>
+        <form 
+          className='form-msg'
+          onSubmit={this.sendMessage}>
           <input 
             type="text" 
             value={this.state.inputMsg}

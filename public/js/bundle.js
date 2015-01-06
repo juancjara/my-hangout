@@ -53,7 +53,9 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
       messages: nextMsgs, inputMsg: ''
     });
   },
-
+  close: function() {
+    console.log(close);1
+  },
   render: function() {
     var messages = this.state.messages.map(function(item ,i) {
       return (
@@ -64,12 +66,19 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
       )
     });
     return (
-      React.DOM.div(null, 
-        "Chat capuchino", 
+      React.DOM.div({className: "chat-block"}, 
+        React.DOM.div({className: "title clickable"}, 
+          React.DOM.div({className: "receiver pull-left"}, this.props.to), 
+          React.DOM.div({className: "options pull-right"}, 
+            React.DOM.div({onClick: this.close}, "c")
+          )
+        ), 
         React.DOM.ul({className: "clear-list"}, 
           messages
         ), 
-        React.DOM.form({onSubmit: this.sendMessage}, 
+        React.DOM.form({
+          className: "form-msg", 
+          onSubmit: this.sendMessage}, 
           React.DOM.input({
             type: "text", 
             value: this.state.inputMsg, 
@@ -90,6 +99,7 @@ module.exports = ChatManagerView = React.createClass({displayName: 'ChatManagerV
     var chats = this.props.chatsTo.map(function(item ,i) {
       return (
         React.DOM.li({
+          className: "same-line", 
           key: i}, 
           ChatView({to: item})
         )
@@ -97,7 +107,7 @@ module.exports = ChatManagerView = React.createClass({displayName: 'ChatManagerV
     },this);
   
     return (
-      React.DOM.ul(null, 
+      React.DOM.ul({className: "clear-list chat-manager"}, 
         chats
       )
     );
@@ -138,7 +148,6 @@ module.exports = FriendListView = React.createClass({displayName: 'FriendListVie
       self.connectUser(username);
     });
     socket.on('user left', function(username) {
-      console.log('left', username);
       self.disconectUser(username);
     });
   },
@@ -160,18 +169,26 @@ module.exports = FriendListView = React.createClass({displayName: 'FriendListVie
   },
   render: function() {
     var friends = this.state.friends.map(function(item ,i) {
-      var txt = item.online? 'on': 'off';
+      var statusClass = 'status '
+      statusClass += (item.online? 'online': 'offline');
       return (
         React.DOM.li({
+          className: "friend-block clickable", 
           key: i, 
           onClick: this.props.addChatTo.bind(null, item.name)}, 
-          item.name, " | ", txt
+          React.DOM.div({className: "picture pull-left"}, 
+            React.DOM.div({className: statusClass})
+          ), 
+          React.DOM.div({className: "pull-left"}, 
+            React.DOM.div({className: "name"}, item.name), 
+            React.DOM.div({className: "last-msg"}, "Yo: xd")
+          )
         )
       )
     }.bind(this));
     return (
-      React.DOM.div(null, "friends", 
-        React.DOM.ul(null, 
+      React.DOM.div({className: "friend-list"}, 
+        React.DOM.ul({className: "clear-list"}, 
           friends
         )
       )

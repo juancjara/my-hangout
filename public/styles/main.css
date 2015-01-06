@@ -1,0 +1,94 @@
+.clear-list {
+  list-style: none;
+  margin: 0 0;
+  padding: 0 0;
+}
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+.same-line {
+  display: inline-block;
+}
+.clickable {
+  cursor: pointer;
+}
+.friend-list .friend-block {
+  background-color: #000;
+  padding: 8px 4px;
+  width: 150px;
+  font-size: 1em;
+  overflow: hidden;
+}
+.friend-list .friend-block:hover {
+  background-color: #808080;
+}
+.friend-list .friend-block .picture {
+  background-color: #ff0;
+  border-radius: 50%;
+  height: 35px;
+  position: relative;
+  width: 35px;
+}
+.friend-list .friend-block .picture .status {
+  border-radius: 50%;
+  bottom: -5px;
+  height: 15px;
+  position: absolute;
+  right: -5px;
+  width: 15px;
+}
+.friend-list .friend-block .picture .online {
+  background-color: #008000;
+}
+.friend-list .friend-block .picture .offline {
+  background-color: #f00;
+}
+.friend-list .friend-block .name {
+  color: #fff;
+  font-weight: bold;
+  padding-left: 10px;
+}
+.friend-list .friend-block .last-msg {
+  color: #fff;
+  opacity: 0.6;
+  padding-left: 10px;
+}
+.chat-manager {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+}
+.chat-manager li {
+  margin: 0 5px;
+}
+.chat-manager .chat-block {
+  border: 1px solid #000;
+  font-size: 1em;
+  min-height: 380px;
+  width: 250px;
+}
+.chat-manager .chat-block .title {
+  background-color: #808080;
+  padding: 4px 15px;
+  overflow: hidden;
+}
+.chat-manager .chat-block .title .options {
+  color: #fff;
+}
+.chat-manager .chat-block .title .receiver {
+  color: #fff;
+  max-width: 150px;
+  overflow: hidden;
+}
+.chat-manager .chat-block .form-msg {
+  bottom: 0;
+  margin-bottom: 0;
+  position: absolute;
+}
+.chat-manager .chat-block .form-msg input {
+  width: 250px;
+  padding: 8px 10px;
+}

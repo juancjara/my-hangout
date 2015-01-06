@@ -1,0 +1,80 @@
+.clear-list
+  list-style: none
+  margin: 0 0
+  padding: 0 0
+
+.pull-left
+  float: left
+.pull-right
+  float: right
+.same-line
+  display: inline-block
+.clickable
+  cursor: pointer
+
+status-size = 15px
+
+.friend-list
+  
+  .friend-block
+    background-color: black
+    padding: 8px 4px
+    width: 150px
+    font-size: 1em
+    overflow: hidden
+    &:hover
+      background-color: gray
+    .picture
+      background-color: yellow
+      border-radius: 50%
+      height: 35px
+      position: relative
+      width: 35px
+      .status
+        border-radius: 50%
+        bottom: -5px
+        height: status-size
+        position: absolute
+        right: -5px
+        width: status-size
+      .online
+        background-color: green
+      .offline
+        background-color: red
+    .name
+      color: white
+      font-weight: bold
+      padding-left: 10px
+    .last-msg
+      color: white
+      opacity: .6
+      padding-left: 10px
+
+.chat-manager
+  bottom: 0
+  position: absolute
+  right: 0
+  li
+    margin: 0 5px
+  .chat-block
+    border: 1px solid black
+    font-size: 1em
+    min-height: 380px
+    width: 250px
+    .title
+      background-color: gray
+      padding: 4px 15px
+      overflow: hidden
+      .options
+        color: white
+      .receiver
+        color: white
+        max-width: 150px
+        overflow: hidden
+    .form-msg
+      bottom: 0
+      margin-bottom: 0
+      position: absolute
+      input
+        width: 250px
+        padding: 8px 10px

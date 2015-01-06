@@ -6,6 +6,9 @@ exports.index = function(req, res) {
 }
 
 exports.chat = function(req, res) {
+  req.session.username = 'yo';
+
+  
   var username = req.session.username;
   User.getFriends(username, function(err, dude) {
     console.log('dude', dude)

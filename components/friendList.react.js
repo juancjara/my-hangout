@@ -18,7 +18,6 @@ module.exports = FriendListView = React.createClass({
       self.connectUser(username);
     });
     socket.on('user left', function(username) {
-      console.log('left', username);
       self.disconectUser(username);
     });
   },
@@ -40,18 +39,26 @@ module.exports = FriendListView = React.createClass({
   },
   render: function() {
     var friends = this.state.friends.map(function(item ,i) {
-      var txt = item.online? 'on': 'off';
+      var statusClass = 'status '
+      statusClass += (item.online? 'online': 'offline');
       return (
         <li 
+          className='friend-block clickable'
           key= {i}
           onClick={this.props.addChatTo.bind(null, item.name)}>
-          {item.name} | {txt}
+          <div className='picture pull-left'>
+            <div className={statusClass}></div>
+          </div>
+          <div className='pull-left'>
+            <div className='name'>{item.name}</div>
+            <div className='last-msg'>Yo: xd</div>
+          </div>
         </li>
       )
     }.bind(this));
     return (
-      <div>friends
-        <ul>
+      <div className="friend-list">
+        <ul className="clear-list">
           {friends}
         </ul>
       </div>

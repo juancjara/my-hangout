@@ -8,6 +8,7 @@ module.exports = ChatManagerView = React.createClass({
     var chats = this.props.chatsTo.map(function(item ,i) {
       return (
         <li 
+          className='same-line'
           key= {i}>
           <ChatView to={item} />
         </li>
@@ -15,7 +16,7 @@ module.exports = ChatManagerView = React.createClass({
     },this);
   
     return (
-      <ul>
+      <ul className='clear-list chat-manager'>
         {chats}
       </ul>
     );
