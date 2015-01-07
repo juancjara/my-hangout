@@ -93,7 +93,7 @@ body {
   width: 250px;
 }
 .chat-manager .chat-block .title {
-  background-color: rgba(0,0,0,0.2);
+  background-color: #404040;
   padding: 4px 15px;
   overflow: hidden;
 }
@@ -106,15 +106,24 @@ body {
   overflow: hidden;
 }
 .chat-manager .chat-block .messages-wrapper {
-  overflow-y: auto;
-  overflow-x: hidden;
   height: 315px;
+  margin-top: 5px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .chat-manager .chat-block .messages-wrapper ul {
   min-height: 290px;
 }
+.chat-manager .chat-block .messages-wrapper ul .space-msg {
+  margin-top: 10px;
+}
+.chat-manager .chat-block .messages-wrapper ul .msg-text {
+  background-color: #fff;
+  padding: 0 10px;
+}
 .chat-manager .chat-block .messages-wrapper .writting-status {
   color: #f00;
+  min-height: 18px;
 }
 .chat-manager .chat-block .form-msg {
   bottom: 0;

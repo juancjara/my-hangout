@@ -80,7 +80,7 @@ status-size = 10px
     height: 380px
     width: 250px
     .title
-      background-color: rgba(0,0,0,.2)
+      background-color: #404040
       padding: 4px 15px
       overflow: hidden
       .options
@@ -90,13 +90,20 @@ status-size = 10px
         max-width: 150px
         overflow: hidden
     .messages-wrapper
-      overflow-y: auto;
-      overflow-x: hidden;
       height: 315px
+      margin-top: 5px;
+      overflow-x: hidden;
+      overflow-y: auto;
       ul
         min-height: 290px
+        .space-msg
+          margin-top: 10px
+        .msg-text
+          background-color: white
+          padding: 0 10px
       .writting-status
         color: red
+        min-height: 18px
     .form-msg
       bottom: 0
       margin-bottom: 0

@@ -7,12 +7,14 @@ var session = require("express-session");
 var rMain = require('./routes/main.route');
 var socket = require('./socketEvents');
 var mongoose = require('mongoose');
+//var autoIncrement = require('mongoose-auto-increment');
 
 /*var JSX = require('node-jsx').install();
 var React = require('react');
 var HangoutApp = require('./components/hangoutApp.react');*/
 
-mongoose.connect('mongodb://localhost/myhangout');
+var connection = mongoose.connect('mongodb://localhost/myhangout');
+//autoIncrement.initialize(connection);
 
 var env = process.env.NODE_ENV || 'dev';
 var port = (env == 'pro') ? 7771: 7777;

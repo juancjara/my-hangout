@@ -5,10 +5,19 @@ var socket = require('./../public/js/clientIO');
 
 module.exports = ChatView = React.createClass({
   getInitialState: function() {
+    var from = this.props.from;
+    var to =  this.props.to.email;
+    var emails = '';
+    if (from > to) {
+      emails = from + to;
+    } else {
+      emails = to + from;
+    }
     return {
       inputMsg: '',
       messages: [],
-      writeStatus: ''
+      writeStatus: '',
+      emails: emails
     };
   },
   componentDidMount: function() {
@@ -27,7 +36,6 @@ module.exports = ChatView = React.createClass({
       }
     })
     socket.on('off writing', function(data) {
-      console.log('off writing', data)
       if (data.from === self.props.to.email) {
         self.setState({
           writeStatus: ''
@@ -56,7 +64,6 @@ module.exports = ChatView = React.createClass({
       typeEvent = 'on'; 
     }
     typeEvent +=' writing';
-    console.log('send writing', this.props.to.email, this.props.from);
     socket.emit(typeEvent, {
         to: this.props.to.email,
         from: this.props.from
@@ -68,7 +75,8 @@ module.exports = ChatView = React.createClass({
     socket.emit('chat message', {
       to: this.props.to.email,
       msg: this.state.inputMsg,
-      from: this.props.from
+      from: this.props.from,
+      emails: this.state.emails
     });
     socket.emit('off writing', {
       to: this.props.to.email,
@@ -81,7 +89,10 @@ module.exports = ChatView = React.createClass({
   },
   render: function() {
     var messages = this.state.messages.map(function(item ,i) {
-      var orientation = 'break-text';//(item.who == 'me') ? 'text-right': 'text-left';
+      var orientation = 'msg-text break-text';//(item.who == 'me') ? 'text-right': 'text-left';
+      if (i > 0) {
+        orientation += (item.who === this.state.messages[i-1].who) ? '': ' space-msg';
+      }
       return (
         <li
           className={orientation}
@@ -89,7 +100,7 @@ module.exports = ChatView = React.createClass({
           {item.msg}
         </li>
       )
-    });
+    }.bind(this));
     var blockClass = 'chat-block ';
       blockClass += this.props.close ? 'hide': '';
 

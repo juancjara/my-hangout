@@ -1,5 +1,6 @@
 var added = false;
 var User = require('./models/user.model');
+var Chat = require('./models/chat.model');
 
 var usernames = {};
 
@@ -15,8 +16,11 @@ exports.init = function(socket){
   });
 
   socket.on('chat message', function(data){
-    socket.broadcast.to(usernames[data.to])
+    Chat.addMsg(data, function(err, data) {
+      if (err) console.log('chat message', err);
+      socket.broadcast.to(usernames[data.to])
       .emit('chat message', data);
+    });
   });
 
   socket.on('on writing', function(data) {
@@ -28,6 +32,7 @@ exports.init = function(socket){
     socket.broadcast.to(usernames[data.to])
       .emit('off writing', data)
   });
+
 
   socket.on('disconnect', function () {
     if (!socket.username) return;
