@@ -14,24 +14,24 @@ module.exports = FriendListView = React.createClass({
   },
   componentDidMount: function() {
     var self = this;
-    socket.on('user joined', function(username) {
-      self.connectUser(username);
+    socket.on('user joined', function(email) {
+      self.connectUser(email);
     });
-    socket.on('user left', function(username) {
-      self.disconectUser(username);
+    socket.on('user left', function(email) {
+      self.disconectUser(email);
     });
   },
-  disconectUser: function(username) {
+  disconectUser: function(email) {
     var friends = this.state.friends;
-    var idx = utils.searchElement(friends, username, 'name');
+    var idx = utils.searchElement(friends, email, 'email');
     friends[idx].online = false;
     this.setState({
       friends: friends
     });
   },
-  connectUser: function(username) {
+  connectUser: function(email) {
     var friends = this.state.friends;
-    var idx = utils.searchElement(friends, username, 'name');
+    var idx = utils.searchElement(friends, email, 'email');
     friends[idx].online = true;
     this.setState({
       friends: friends
@@ -45,7 +45,7 @@ module.exports = FriendListView = React.createClass({
         <li 
           className='friend-block clickable'
           key= {i}
-          onClick={this.props.addChatTo.bind(null, item.name)}>
+          onClick={this.props.addChatTo.bind(null, item.email)}>
           <div className='picture-wrapper pull-left'>
             <img className='picture' src={item.picture}></img>
             <div className={statusClass}></div>

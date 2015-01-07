@@ -21,6 +21,21 @@ exports.chat = function(req, res) {
 }
 
 exports.postLogin = function(req, res) {
-  req.session.username = req.body.username;
-  res.redirect('/chat');
+  var username = req.body.username;
+  User.getFriends(username, function(err, dude) {
+    if (err) console.log('err', err);
+
+    var data = {
+      user: dude
+    };
+    res.render('index', {
+      initialState: JSON.stringify(data)
+    });
+    
+  });
+  /*User.findOne({name: req.body.username}, function(err, doc) {
+    if (err) console.log('login err', err);
+    console.log('doc', doc);
+    res.redirect('/chat');
+  });*/
 }

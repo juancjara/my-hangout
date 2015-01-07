@@ -7,28 +7,32 @@ var socket = require('./../public/js/clientIO');
 var utils = require('./../utils');
 
 module.exports = HangoutApp = React.createClass({
-  getInitialState: function(props) {
-    props = props || this.props;
-    var chatsTo = props.initialState.friends.slice(0);
+  getInitialState: function() {
+    var user = this.props.initialState.user;
+    var chatsTo = user.friends.slice(0);
     for (var i = 0; i < chatsTo.length; i++) {
       chatsTo[i].close = true;
     };
+    var userData = {
+      email: user.email,
+      name: user.name
+    }
     return {
       chatsTo: chatsTo,
-      username: props.initialState.username
+      user: userData
     }
   },
   componentDidMount: function() {
     var self = this;
-    socket.emit('add user', this.state.username);
-    socket.on('open chat', function(username) {
-      console.log('openChat', username);
-      self.addChatTo(username);
+    socket.emit('add user', this.state.user.email);
+    socket.on('open chat', function(email) {
+      console.log('openChat', email);
+      self.addChatTo(email);
     })
   },
-  addChatTo: function(username) {
-    var idx = utils.searchElement(this.state.chatsTo, username,
-                                  'name');
+  addChatTo: function(email) {
+    var idx = utils.searchElement(this.state.chatsTo, email,
+      'email');
     if (idx != -1) {
       var arr = this.state.chatsTo;
       arr[idx].close = false;
@@ -47,15 +51,15 @@ module.exports = HangoutApp = React.createClass({
       chatsTo: nextChatsTo
     });
   },
-  closeChat: function(username) {
-    this.toggleChat(username, true);
+  closeChat: function(email) {
+    this.toggleChat(email, true);
   },
-  openChat: function(username) {
-    this.toggleChat(username, false);
+  openChat: function(email) {
+    this.toggleChat(email, false);
   },
-  toggleChat: function(username, status) {
-    var idx = utils.searchElement(this.state.chatsTo, username,
-                                  'name');
+  toggleChat: function(email, status) {
+    var idx = utils.searchElement(this.state.chatsTo, email,
+                                  'email');
     var arr = this.state.chatsTo;
     arr[idx].close = status;
     this.setState({
@@ -66,10 +70,10 @@ module.exports = HangoutApp = React.createClass({
     return (
       <div>
         <FriendListView 
-          friends={this.props.initialState.friends} 
+          friends={this.props.initialState.user.friends} 
           addChatTo={this.addChatTo}/>
         <ChatManagerView 
-          from= {this.state.username}
+          from= {this.state.user.email}
           chatsTo={this.state.chatsTo}
           closeChat= {this.closeChat}
           openChat= {this.openChat} />

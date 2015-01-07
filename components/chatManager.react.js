@@ -16,12 +16,9 @@ module.exports = ChatManagerView = React.createClass({
   },
   scroll: function() {
     for(var i =0,len = this.state.cont.length; i < len; i++) {
-      this.state.cont[i].scrollTop = this.state.cont[i].scrollHeight + 18;
+      this.state.cont[i].scrollTop = 
+        this.state.cont[i].scrollHeight + 18;
     }
-    /*$('.messages-wrapper')[0].scrollTop = (this.state.cont[0].scrollHeight + 18);
-    console.log('after', $('.messages-wrapper')[0].scrollTop);*/
-    /*this.state.cont[0].scrollHeight +
-                                    18;*/
   },
   render: function() {
     var chats = this.props.chatsTo.map(function(item ,i) {
@@ -31,7 +28,7 @@ module.exports = ChatManagerView = React.createClass({
           key= {i}>
           <ChatView 
             from = {this.props.from}
-            to={item.name}
+            to = {item}
             close={item.close}
             closeChat={this.props.closeChat}
             openChat={this.props.openChat}

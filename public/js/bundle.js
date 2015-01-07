@@ -29,20 +29,21 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
   componentDidMount: function() {
     var self = this;
     socket.on('chat message', function(data) {
-      if (data.from === self.props.to) {
+      if (data.from === self.props.to.email) {
         self.open();
-        self.addMsg(data.msg, self.props.to);
+        self.addMsg(data.msg, self.props.to.email);
       }
     });
     socket.on('on writing', function(data) {
-      if (data.from === self.props.to) {
+      if (data.from === self.props.to.email) {
         self.setState({
           writeStatus: 'escribiendo'
         });
       }
     })
     socket.on('off writing', function(data) {
-      if (data.from === self.props.to) {
+      console.log('off writing', data)
+      if (data.from === self.props.to.email) {
         self.setState({
           writeStatus: ''
         });
@@ -50,7 +51,7 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
     })
   },
   open: function() {
-    this.props.openChat(this.props.to);
+    this.props.openChat(this.props.to.email);
   },
   addMsg: function(msg, who) {
     var nextMsgs = this.state.messages.concat([{
@@ -70,8 +71,9 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
       typeEvent = 'on'; 
     }
     typeEvent +=' writing';
+    console.log('send writing', this.props.to.email, this.props.from);
     socket.emit(typeEvent, {
-        to: this.props.to,
+        to: this.props.to.email,
         from: this.props.from
       });
     this.setState({inputMsg: e.target.value});
@@ -79,14 +81,14 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
   sendMessage: function(e) {
     e.preventDefault();
     socket.emit('chat message', {
-      to: this.props.to,
+      to: this.props.to.email,
       msg: this.state.inputMsg,
       from: this.props.from
     });
     socket.emit('off writing', {
-      to: this.props.to,
+      to: this.props.to.email,
       from: this.props.from
-    })
+    });
     this.addMsg(this.state.inputMsg, 'me');
     this.setState({
       inputMsg: ''
@@ -104,14 +106,16 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
       )
     });
     var blockClass = 'chat-block ';
-    blockClass += this.props.close ? 'hide': '';
+      blockClass += this.props.close ? 'hide': '';
 
     return (
       React.DOM.div({className: blockClass}, 
         React.DOM.div({className: "title clickable"}, 
-          React.DOM.div({className: "receiver pull-left"}, this.props.to), 
+          React.DOM.div({className: "receiver pull-left"}, this.props.to.name), 
           React.DOM.div({className: "options pull-right"}, 
-            React.DOM.div({onClick: this.props.closeChat.bind(null, this.props.to)}, "c")
+            React.DOM.div({onClick: this.props.closeChat.bind(null, this.props.to.email)}, 
+              "c"
+            )
           )
         ), 
 
@@ -157,12 +161,9 @@ module.exports = ChatManagerView = React.createClass({displayName: 'ChatManagerV
   },
   scroll: function() {
     for(var i =0,len = this.state.cont.length; i < len; i++) {
-      this.state.cont[i].scrollTop = this.state.cont[i].scrollHeight + 18;
+      this.state.cont[i].scrollTop = 
+        this.state.cont[i].scrollHeight + 18;
     }
-    /*$('.messages-wrapper')[0].scrollTop = (this.state.cont[0].scrollHeight + 18);
-    console.log('after', $('.messages-wrapper')[0].scrollTop);*/
-    /*this.state.cont[0].scrollHeight +
-                                    18;*/
   },
   render: function() {
     var chats = this.props.chatsTo.map(function(item ,i) {
@@ -172,7 +173,7 @@ module.exports = ChatManagerView = React.createClass({displayName: 'ChatManagerV
           key: i}, 
           ChatView({
             from: this.props.from, 
-            to: item.name, 
+            to: item, 
             close: item.close, 
             closeChat: this.props.closeChat, 
             openChat: this.props.openChat, 
@@ -219,24 +220,24 @@ module.exports = FriendListView = React.createClass({displayName: 'FriendListVie
   },
   componentDidMount: function() {
     var self = this;
-    socket.on('user joined', function(username) {
-      self.connectUser(username);
+    socket.on('user joined', function(email) {
+      self.connectUser(email);
     });
-    socket.on('user left', function(username) {
-      self.disconectUser(username);
+    socket.on('user left', function(email) {
+      self.disconectUser(email);
     });
   },
-  disconectUser: function(username) {
+  disconectUser: function(email) {
     var friends = this.state.friends;
-    var idx = utils.searchElement(friends, username, 'name');
+    var idx = utils.searchElement(friends, email, 'email');
     friends[idx].online = false;
     this.setState({
       friends: friends
     });
   },
-  connectUser: function(username) {
+  connectUser: function(email) {
     var friends = this.state.friends;
-    var idx = utils.searchElement(friends, username, 'name');
+    var idx = utils.searchElement(friends, email, 'email');
     friends[idx].online = true;
     this.setState({
       friends: friends
@@ -250,7 +251,7 @@ module.exports = FriendListView = React.createClass({displayName: 'FriendListVie
         React.DOM.li({
           className: "friend-block clickable", 
           key: i, 
-          onClick: this.props.addChatTo.bind(null, item.name)}, 
+          onClick: this.props.addChatTo.bind(null, item.email)}, 
           React.DOM.div({className: "picture-wrapper pull-left"}, 
             React.DOM.img({className: "picture", src: item.picture}), 
             React.DOM.div({className: statusClass})
@@ -281,28 +282,32 @@ var socket = require('./../public/js/clientIO');
 var utils = require('./../utils');
 
 module.exports = HangoutApp = React.createClass({displayName: 'HangoutApp',
-  getInitialState: function(props) {
-    props = props || this.props;
-    var chatsTo = props.initialState.friends.slice(0);
+  getInitialState: function() {
+    var user = this.props.initialState.user;
+    var chatsTo = user.friends.slice(0);
     for (var i = 0; i < chatsTo.length; i++) {
       chatsTo[i].close = true;
     };
+    var userData = {
+      email: user.email,
+      name: user.name
+    }
     return {
       chatsTo: chatsTo,
-      username: props.initialState.username
+      user: userData
     }
   },
   componentDidMount: function() {
     var self = this;
-    socket.emit('add user', this.state.username);
-    socket.on('open chat', function(username) {
-      console.log('openChat', username);
-      self.addChatTo(username);
+    socket.emit('add user', this.state.user.email);
+    socket.on('open chat', function(email) {
+      console.log('openChat', email);
+      self.addChatTo(email);
     })
   },
-  addChatTo: function(username) {
-    var idx = utils.searchElement(this.state.chatsTo, username,
-                                  'name');
+  addChatTo: function(email) {
+    var idx = utils.searchElement(this.state.chatsTo, email,
+      'email');
     if (idx != -1) {
       var arr = this.state.chatsTo;
       arr[idx].close = false;
@@ -321,15 +326,15 @@ module.exports = HangoutApp = React.createClass({displayName: 'HangoutApp',
       chatsTo: nextChatsTo
     });
   },
-  closeChat: function(username) {
-    this.toggleChat(username, true);
+  closeChat: function(email) {
+    this.toggleChat(email, true);
   },
-  openChat: function(username) {
-    this.toggleChat(username, false);
+  openChat: function(email) {
+    this.toggleChat(email, false);
   },
-  toggleChat: function(username, status) {
-    var idx = utils.searchElement(this.state.chatsTo, username,
-                                  'name');
+  toggleChat: function(email, status) {
+    var idx = utils.searchElement(this.state.chatsTo, email,
+                                  'email');
     var arr = this.state.chatsTo;
     arr[idx].close = status;
     this.setState({
@@ -340,10 +345,10 @@ module.exports = HangoutApp = React.createClass({displayName: 'HangoutApp',
     return (
       React.DOM.div(null, 
         FriendListView({
-          friends: this.props.initialState.friends, 
+          friends: this.props.initialState.user.friends, 
           addChatTo: this.addChatTo}), 
         ChatManagerView({
-          from: this.state.username, 
+          from: this.state.user.email, 
           chatsTo: this.state.chatsTo, 
           closeChat: this.closeChat, 
           openChat: this.openChat})

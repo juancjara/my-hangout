@@ -5,12 +5,12 @@ var usernames = {};
 
 exports.init = function(socket){
   
-  socket.on('add user', function(username) {
-    User.connect(username, function(err, d) {
+  socket.on('add user', function(email) {
+    User.connect(email, function(err, d) {
       if (err) console.log('add err', err);
-      socket.username = username;
-      usernames[username] = socket.id;
-      socket.broadcast.emit('user joined', username);
+      socket.username = email;
+      usernames[email] = socket.id;
+      socket.broadcast.emit('user joined', email);
     })
   });
 

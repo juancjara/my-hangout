@@ -10,15 +10,17 @@ var UserSchema = new Schema({
   friends: [{ type : ObjectId, ref: 'User' }]
 })
 
-UserSchema.statics.connect = function(name, cb) {
-  User.findOne({ name: name }, function (err, doc) {
+UserSchema.statics.connect = function(email, cb) {
+  User.findOne({ email: email }, function (err, doc) {
+    if (err) console.log('err connect', err);
     doc.online = true;
     doc.save(cb);
   });
 }
 
-UserSchema.statics.disconnect = function(name, cb) {
-  User.findOne({ name: name }, function (err, doc) {
+UserSchema.statics.disconnect = function(email, cb) {
+  User.findOne({ email: email }, function (err, doc) {
+    if (err) console.log('err disconnect', err);
     doc.online = false;
     doc.save(cb);
   });

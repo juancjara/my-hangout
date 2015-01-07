@@ -14,20 +14,21 @@ module.exports = ChatView = React.createClass({
   componentDidMount: function() {
     var self = this;
     socket.on('chat message', function(data) {
-      if (data.from === self.props.to) {
+      if (data.from === self.props.to.email) {
         self.open();
-        self.addMsg(data.msg, self.props.to);
+        self.addMsg(data.msg, self.props.to.email);
       }
     });
     socket.on('on writing', function(data) {
-      if (data.from === self.props.to) {
+      if (data.from === self.props.to.email) {
         self.setState({
           writeStatus: 'escribiendo'
         });
       }
     })
     socket.on('off writing', function(data) {
-      if (data.from === self.props.to) {
+      console.log('off writing', data)
+      if (data.from === self.props.to.email) {
         self.setState({
           writeStatus: ''
         });
@@ -35,7 +36,7 @@ module.exports = ChatView = React.createClass({
     })
   },
   open: function() {
-    this.props.openChat(this.props.to);
+    this.props.openChat(this.props.to.email);
   },
   addMsg: function(msg, who) {
     var nextMsgs = this.state.messages.concat([{
@@ -55,8 +56,9 @@ module.exports = ChatView = React.createClass({
       typeEvent = 'on'; 
     }
     typeEvent +=' writing';
+    console.log('send writing', this.props.to.email, this.props.from);
     socket.emit(typeEvent, {
-        to: this.props.to,
+        to: this.props.to.email,
         from: this.props.from
       });
     this.setState({inputMsg: e.target.value});
@@ -64,14 +66,14 @@ module.exports = ChatView = React.createClass({
   sendMessage: function(e) {
     e.preventDefault();
     socket.emit('chat message', {
-      to: this.props.to,
+      to: this.props.to.email,
       msg: this.state.inputMsg,
       from: this.props.from
     });
     socket.emit('off writing', {
-      to: this.props.to,
+      to: this.props.to.email,
       from: this.props.from
-    })
+    });
     this.addMsg(this.state.inputMsg, 'me');
     this.setState({
       inputMsg: ''
@@ -89,14 +91,16 @@ module.exports = ChatView = React.createClass({
       )
     });
     var blockClass = 'chat-block ';
-    blockClass += this.props.close ? 'hide': '';
+      blockClass += this.props.close ? 'hide': '';
 
     return (
       <div className={blockClass}>
         <div className='title clickable'>
-          <div className='receiver pull-left'>{this.props.to}</div>
+          <div className='receiver pull-left'>{this.props.to.name}</div>
           <div className='options pull-right'>
-            <div onClick={this.props.closeChat.bind(null, this.props.to)}>c</div>
+            <div onClick={this.props.closeChat.bind(null, this.props.to.email)}>
+              c
+            </div>
           </div>
         </div>
 

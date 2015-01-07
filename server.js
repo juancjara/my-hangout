@@ -28,7 +28,7 @@ app.get('/chat', rMain.chat);
 
 app.get('/', rMain.index);
 
-app.post('/gg', rMain.postLogin);
+app.post('/ggmail', rMain.postLogin);
 
 io.on('connection', socket.init);
 
