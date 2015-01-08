@@ -76,12 +76,8 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
   },
   bulkAddMsg: function(msgs) {
     var nextMsgs = this.state.messages;
-
-    for (var i = msgs.length -1; i >= 0 ; i--) {
-      nextMsgs = nextMsgs.concat([msgs[i]]);
-    };
+    nextMsgs = nextMsgs.concat(msgs.reverse());
     this.setState({messages: nextMsgs}, function () {
-      console.log(this.state.messages);
       this.props.scroll();
     }.bind(this));
   },
