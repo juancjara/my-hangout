@@ -2,6 +2,7 @@
 
 var React = require('react');
 var socket = require('./../public/js/clientIO');
+var utils = require('./../utils');
 
 module.exports = ChatView = React.createClass({
   getInitialState: function() {
@@ -42,9 +43,32 @@ module.exports = ChatView = React.createClass({
         });
       }
     })
+    var data = {
+      emails: this.state.emails,
+      limit: 20,
+      lastUpdate: Date.now()
+    }
+    var self = this;
+    utils.api.consume('getMessages', data, function(err, data) {
+      if (err || data.err) console.log('getMessages', err);
+      else {
+        self.bulkAddMsg(data.messages);
+      }
+    });
   },
   open: function() {
     this.props.openChat(this.props.to.email);
+  },
+  bulkAddMsg: function(msgs) {
+    var nextMsgs = this.state.messages;
+
+    for (var i = msgs.length -1; i >= 0 ; i--) {
+      nextMsgs = nextMsgs.concat([msgs[i]]);
+    };
+    this.setState({messages: nextMsgs}, function () {
+      console.log(this.state.messages);
+      this.props.scroll();
+    }.bind(this));
   },
   addMsg: function(msg, who) {
     var nextMsgs = this.state.messages.concat([{

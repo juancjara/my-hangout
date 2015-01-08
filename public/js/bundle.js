@@ -17,6 +17,7 @@ React.render(
 
 var React = require('react');
 var socket = require('./../public/js/clientIO');
+var utils = require('./../utils');
 
 module.exports = ChatView = React.createClass({displayName: 'ChatView',
   getInitialState: function() {
@@ -57,9 +58,32 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
         });
       }
     })
+    var data = {
+      emails: this.state.emails,
+      limit: 20,
+      lastUpdate: Date.now()
+    }
+    var self = this;
+    utils.api.consume('getMessages', data, function(err, data) {
+      if (err || data.err) console.log('getMessages', err);
+      else {
+        self.bulkAddMsg(data.messages);
+      }
+    });
   },
   open: function() {
     this.props.openChat(this.props.to.email);
+  },
+  bulkAddMsg: function(msgs) {
+    var nextMsgs = this.state.messages;
+
+    for (var i = msgs.length -1; i >= 0 ; i--) {
+      nextMsgs = nextMsgs.concat([msgs[i]]);
+    };
+    this.setState({messages: nextMsgs}, function () {
+      console.log(this.state.messages);
+      this.props.scroll();
+    }.bind(this));
   },
   addMsg: function(msg, who) {
     var nextMsgs = this.state.messages.concat([{
@@ -153,7 +177,7 @@ module.exports = ChatView = React.createClass({displayName: 'ChatView',
     )
   }
 });
-},{"./../public/js/clientIO":"/home/juancarlos/Github/my-hangout/public/js/clientIO.js","react":"/home/juancarlos/Github/my-hangout/node_modules/react/react.js"}],"/home/juancarlos/Github/my-hangout/components/chatManager.react.js":[function(require,module,exports){
+},{"./../public/js/clientIO":"/home/juancarlos/Github/my-hangout/public/js/clientIO.js","./../utils":"/home/juancarlos/Github/my-hangout/utils.js","react":"/home/juancarlos/Github/my-hangout/node_modules/react/react.js"}],"/home/juancarlos/Github/my-hangout/components/chatManager.react.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
@@ -18707,4 +18731,33 @@ exports.searchElement = function(arr, searchTerm, property) {
   }
   return -1;
 }
+
+exports.api = (function() {
+  var post = function(url, data, cb) {
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: JSON.stringify(data) || {},
+      contentType: 'application/json; charset=UTF-8',
+      dataType: 'json',
+      success: function(res){
+        cb(null, res);
+      },
+      error: function(jqXHR, textStatus, errorThrown ){
+        cb({msg: errorThrown});
+      }
+    });
+  };
+
+  var urls = {
+    'getPreviewImage': '/getPreview',
+    'getMessages': '/getMessages'
+  }
+
+  return {
+    consume: function(name, data, cb) {
+      post(urls[name], data, cb);
+    }
+  }
+})();
 },{}]},{},["/home/juancarlos/Github/my-hangout/app.js"]);

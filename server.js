@@ -19,18 +19,18 @@ var connection = mongoose.connect('mongodb://localhost/myhangout');
 var env = process.env.NODE_ENV || 'dev';
 var port = (env == 'pro') ? 7771: 7777;
 
-//app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }))
+//app.use(bodyParser.urlencoded({ extended: false }))
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use('/public', express.static(__dirname + '/public'));
 app.use(session({secret: 'pulpin law', saveUninitialized: true, resave: true}));
+app.use(bodyParser.json());
 
 app.get('/chat', rMain.chat);
-
 app.get('/', rMain.index);
 
 app.post('/ggmail', rMain.postLogin);
+app.post('/getMessages', rMain.getMessages);
 
 io.on('connection', socket.init);
 

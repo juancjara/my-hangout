@@ -10,7 +10,9 @@ var query = function  (arg) {
     });
 }
 
+var date = Date.now();
+
 query({
-  skipLast: 5,
-  take: 5
+  lastUpdate: date,
+  limit: 1
 });
