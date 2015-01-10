@@ -15,7 +15,8 @@ module.exports = HangoutApp = React.createClass({
     };
     var userData = {
       email: user.email,
-      name: user.name
+      name: user.name,
+      picture: user.picture
     }
     return {
       chatsTo: chatsTo,
@@ -74,6 +75,7 @@ module.exports = HangoutApp = React.createClass({
           addChatTo={this.addChatTo}/>
         <ChatManagerView 
           from= {this.state.user.email}
+          pictureFrom = {this.state.user.picture}
           chatsTo={this.state.chatsTo}
           closeChat= {this.closeChat}
           openChat= {this.openChat} />

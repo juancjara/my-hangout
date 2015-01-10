@@ -8,6 +8,12 @@ body {
   -moz-hyphens: auto;
   hyphens: autos;
 }
+.top {
+  vertical-align: top;
+}
+.bottom {
+  vertical-align: bottom;
+}
 .clear-list {
   list-style: none;
   margin: 0 0;
@@ -48,7 +54,6 @@ body {
   position: relative;
 }
 .friend-list .friend-block .picture-wrapper .picture {
-  background-color: #ff0;
   border-radius: 50%;
   height: 28px;
   width: 28px;
@@ -90,7 +95,7 @@ body {
   border: 1px solid #000;
   font-size: 1em;
   height: 380px;
-  width: 250px;
+  width: 260px;
 }
 .chat-manager .chat-block .title {
   background-color: #404040;
@@ -111,15 +116,34 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
 }
+.chat-manager .chat-block .messages-wrapper .loader {
+  text-align: center;
+}
 .chat-manager .chat-block .messages-wrapper ul {
-  min-height: 290px;
+  min-height: 285px;
+}
+.chat-manager .chat-block .messages-wrapper ul .picture {
+  padding: 0 0;
+  margin: 0 0;
+  line-height: 1;
+  display: inline-block;
+  width: 25;
 }
 .chat-manager .chat-block .messages-wrapper ul .space-msg {
   margin-top: 10px;
 }
 .chat-manager .chat-block .messages-wrapper ul .msg-text {
   background-color: #fff;
+  display: inline-block;
+  margin: 0 0;
   padding: 0 10px;
+  width: 190px;
+}
+.chat-manager .chat-block .messages-wrapper ul .right-msg {
+  margin-right: 32;
+}
+.chat-manager .chat-block .messages-wrapper ul .left-msg {
+  margin-left: 30;
 }
 .chat-manager .chat-block .messages-wrapper .writting-status {
   color: #f00;
@@ -131,6 +155,6 @@ body {
   position: absolute;
 }
 .chat-manager .chat-block .form-msg input {
-  width: 250px;
+  width: 261px;
   padding: 8px 10px;
 }

@@ -7,6 +7,10 @@ body
   -webkit-hyphens: auto
   -moz-hyphens: auto
   hyphens: autos
+.top
+  vertical-align: top
+.bottom
+  vertical-align: bottom
 
 .clear-list
   list-style: none
@@ -43,7 +47,6 @@ status-size = 10px
     .picture-wrapper
       position: relative
       .picture
-        background-color: yellow
         border-radius: 50%
         height: 28px
         width: 28px
@@ -67,6 +70,8 @@ status-size = 10px
       opacity: .6
       padding-left: 10px
 
+msg-picture-size = 32
+
 .chat-manager
   bottom: 0
   position: absolute
@@ -78,7 +83,7 @@ status-size = 10px
     border: 1px solid black
     font-size: 1em
     height: 380px
-    width: 250px
+    width: 260px
     .title
       background-color: #404040
       padding: 4px 15px
@@ -91,16 +96,31 @@ status-size = 10px
         overflow: hidden
     .messages-wrapper
       height: 315px
-      margin-top: 5px;
-      overflow-x: hidden;
-      overflow-y: auto;
+      margin-top: 5px
+      overflow-x: hidden
+      overflow-y: auto
+      .loader
+        text-align: center
       ul
-        min-height: 290px
+        min-height: 285px
+        .picture
+          padding: 0 0
+          margin: 0 0
+          line-height: 1
+          display: inline-block
+          width: msg-picture-size - 7
         .space-msg
           margin-top: 10px
         .msg-text
           background-color: white
+          display: inline-block
+          margin: 0 0
           padding: 0 10px
+          width: 190px;
+        .right-msg
+          margin-right: msg-picture-size
+        .left-msg
+          margin-left: msg-picture-size - 2
       .writting-status
         color: red
         min-height: 18px
@@ -109,5 +129,5 @@ status-size = 10px
       margin-bottom: 0
       position: absolute
       input
-        width: 250px
+        width: 261px
         padding: 8px 10px

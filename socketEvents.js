@@ -16,10 +16,11 @@ exports.init = function(socket){
   });
 
   socket.on('chat message', function(data){
+    socket.broadcast.to(usernames[data.to])
+    .emit('chat message', data);
     Chat.addMsg(data, function(err, data) {
       if (err) console.log('chat message', err);
-      socket.broadcast.to(usernames[data.to])
-      .emit('chat message', data);
+      console.log('msg saved');
     });
   });
 

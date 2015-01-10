@@ -27,7 +27,7 @@ ChatSchema.statics.addMsg = function(data, cb) {
 }
 
 ChatSchema.statics.getLastMsgs = function(query, cb) {
-  Chat.find({emails: query.emails, dateTime: {$lte: query.lastUpdate}})
+  Chat.find({emails: query.emails, dateTime: {$lt: query.lastUpdate}})
     .limit(query.limit)
     .sort( '-dateTime' ).exec(cb);
 }

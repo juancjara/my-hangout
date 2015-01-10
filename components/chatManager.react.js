@@ -27,6 +27,7 @@ module.exports = ChatManagerView = React.createClass({
           className='same-line'
           key= {i}>
           <ChatView 
+            pictureFrom = {this.props.pictureFrom}
             from = {this.props.from}
             to = {item}
             close={item.close}
