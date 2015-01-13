@@ -7,7 +7,6 @@ var Loader = require('./loader.react');
 
 module.exports = ChatView = React.createClass({
   getInitialState: function() {
-    //this.waitingPrevious = false;
     var from = this.props.from;
     var to =  this.props.to.email;
     var emails = '';
@@ -25,7 +24,7 @@ module.exports = ChatView = React.createClass({
     };
   },
   getPreviousMsgs: function(time) {
-    if (this.state.waitingPrevius) {
+    if (this.state.waitingPrevious) {
       return;
     }
     var _this = this;
@@ -121,10 +120,11 @@ module.exports = ChatView = React.createClass({
       msg: msg,
       who: who
     }]);
+    var elm = this.refs.messageWrapper.getDOMNode();
     this.setState({
       messages: nextMsgs
     }, function () {
-      this.props.scroll();
+      elm.scrollTop = elm.scrollHeight + 18;
     }.bind(this));
   },
   handleChange: function(e) {
