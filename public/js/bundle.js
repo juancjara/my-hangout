@@ -352,10 +352,12 @@ module.exports = FriendListView = React.createClass({displayName: 'FriendListVie
   connectUser: function(email) {
     var friends = this.state.friends;
     var idx = utils.searchElement(friends, email, 'email');
-    friends[idx].online = true;
-    this.setState({
-      friends: friends
-    });
+    if (idx != -1) {
+      friends[idx].online = true;
+      this.setState({
+        friends: friends
+      });
+    }
   },
   render: function() {
     var friends = this.state.friends.map(function(item ,i) {
