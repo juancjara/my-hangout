@@ -46,6 +46,11 @@ var someoneElse = {
 //   }
 //   return console.log('saved');
 // });
+
+var yoId = '5782a3c5df4965ce258ded48';
+var dudeId = '578316e0a40937c22b33ac4d';
+var elseId = '578316fa84b570d92b0649bd';
+
 // User.addFriend({
 //   id: '5782ae9700238e0a47b29172',
 //   userId: '5782bc03801328335a9c4de4'
