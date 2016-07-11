@@ -21177,7 +21177,6 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      'Yo',
 	      React.createElement(FriendListView, {
 	        friends: this.props.initialState.user.friends,
 	        addChatTo: this.addChatTo }),

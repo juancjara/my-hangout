@@ -69,7 +69,6 @@ module.exports = HangoutApp = React.createClass({
   render: function() {
     return (
       <div>
-        Yo
         <FriendListView 
           friends={this.props.initialState.user.friends} 
           addChatTo={this.addChatTo}/>
