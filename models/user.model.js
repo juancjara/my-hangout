@@ -51,7 +51,7 @@ UserSchema.statics.addFriend = function(data) {
       deferred.resolve();
     });
 
-  return deferred.promise();
+  return deferred.promise;
 };
 
 var User = module.exports =
