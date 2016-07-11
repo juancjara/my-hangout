@@ -4,7 +4,7 @@ var Chat = require('./../models/chat.model');
 
 exports.index = function(req, res) {
   res.render('login');  
-}
+};
 
 exports.chat = function(req, res) {
   var email = req.session.email;

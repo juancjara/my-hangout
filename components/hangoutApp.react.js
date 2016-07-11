@@ -1,6 +1,5 @@
-/** @jsx React.DOM */
-
 var React = require('react');
+
 var FriendListView = require('./friendList.react');
 var ChatManagerView = require('./chatManager.react');
 var socket = require('./../public/js/clientIO');
@@ -70,6 +69,7 @@ module.exports = HangoutApp = React.createClass({
   render: function() {
     return (
       <div>
+        Yo
         <FriendListView 
           friends={this.props.initialState.user.friends} 
           addChatTo={this.addChatTo}/>

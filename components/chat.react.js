@@ -1,6 +1,5 @@
-/** @jsx React.DOM */
-
 var React = require('react');
+
 var socket = require('./../public/js/clientIO');
 var utils = require('./../utils');
 var Loader = require('./loader.react');
@@ -53,7 +52,7 @@ module.exports = ChatView = React.createClass({
   },
   componentDidMount: function() {
     var self = this;
-    var messageElm = this.refs.messageWrapper.getDOMNode();
+    var messageElm = this.messageWrapper;
     $(messageElm).on('scroll', function(e) {
       if (!this.scrollTop) {
         self.getPreviousMsgs(self.state.messages[0].dateTime);
@@ -95,7 +94,7 @@ module.exports = ChatView = React.createClass({
     this.props.openChat(this.props.to.email);
   },
   bulkMsgAppend: function(msgs) {
-    var elm = this.refs.messageWrapper.getDOMNode();
+    var elm = this.messageWrapper;
     var lastScroll = elm.scrollHeight;
     var nextMsgs = this.state.messages;
     _this = this;
@@ -109,7 +108,7 @@ module.exports = ChatView = React.createClass({
   },
   bulkAddMsg: function(msgs) {
     var nextMsgs = this.state.messages;
-    var elm = this.refs.messageWrapper.getDOMNode();
+    var elm = this.messageWrapper;
     nextMsgs = nextMsgs.concat(msgs.reverse());
     this.setState({messages: nextMsgs}, function () {
       elm.scrollTop = elm.scrollHeight;
@@ -120,7 +119,7 @@ module.exports = ChatView = React.createClass({
       msg: msg,
       who: who
     }]);
-    var elm = this.refs.messageWrapper.getDOMNode();
+    var elm = this.messageWrapper;
     this.setState({
       messages: nextMsgs
     }, function () {
@@ -156,6 +155,9 @@ module.exports = ChatView = React.createClass({
     this.setState({
       inputMsg: ''
     });
+  },
+  setWrapper: function (el) {
+    this.messageWrapper = el;
   },
   render: function() {
     var len = this.state.messages.length;
@@ -215,7 +217,7 @@ module.exports = ChatView = React.createClass({
           </div>
         </div>
 
-        <div className='messages-wrapper' ref='messageWrapper'>
+        <div className='messages-wrapper' ref={this.setWrapper}>
           <Loader 
             show={this.state.waitingPrevious} />
           <ul className='clear-list'>

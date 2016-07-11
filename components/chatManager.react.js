@@ -1,6 +1,5 @@
-/** @jsx React.DOM */
-
 var React = require('react');
+
 var ChatView = require('./chat.react');
 
 module.exports = ChatManagerView = React.createClass({
@@ -16,7 +15,7 @@ module.exports = ChatManagerView = React.createClass({
   },
   scroll: function() {
     for(var i =0,len = this.state.cont.length; i < len; i++) {
-      this.state.cont[i].scrollTop = 
+      this.state.cont[i].scrollTop =
         this.state.cont[i].scrollHeight + 18;
     }
   },

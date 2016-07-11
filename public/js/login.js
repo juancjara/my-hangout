@@ -2,7 +2,7 @@ $('form').on('submit', function(e) {
   e.preventDefault();
   var data = {
     email: $('input').val()
-  }
+  };
   $.ajax({
     type: 'POST',
     url: '/ggmail',

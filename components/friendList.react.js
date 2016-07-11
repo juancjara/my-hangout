@@ -1,6 +1,5 @@
-/** @jsx React.DOM */
-
 var React = require('react');
+
 var FriendView = require('./friend.react');
 var socket = require('./../public/js/clientIO');
 var utils = require('./../utils');
