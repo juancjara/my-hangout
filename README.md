@@ -3,4 +3,4 @@ my-hangout
 
 My own version of gmail chat. ReactJS/SocketIO
 
-[Demo](http://104.131.28.224:8001/)
+[Demo](http://45.55.218.34:7001/)
